@@ -180,3 +180,15 @@ C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\System.N
 C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\System.Numerics.Vectors.xml
 C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\System.Text.Encodings.Web.xml
+C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\FireSharp.dll
+C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\Microsoft.Threading.Tasks.dll
+C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\Microsoft.Threading.Tasks.Extensions.Desktop.dll
+C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\Microsoft.Threading.Tasks.Extensions.dll
+C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\System.Net.Http.Extensions.dll
+C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\System.Net.Http.Primitives.dll
+C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\Microsoft.Threading.Tasks.xml
+C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\Microsoft.Threading.Tasks.Extensions.xml
+C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\Microsoft.Threading.Tasks.Extensions.Desktop.xml
+C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\System.Net.Http.Extensions.xml
+C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\bin\System.Net.Http.Primitives.xml
+C:\Users\ghisl\source\repos\HealthStuff\HealthBuddies\HealthBuddies\obj\Debug\HealthBuddies.csproj.App.config
