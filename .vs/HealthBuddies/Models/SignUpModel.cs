@@ -10,7 +10,7 @@ namespace HealthBuddies.Models
     public class SignUpModel
     {
         [Key]
-        public int id { get; set; }
+        public string id { get; set; }
         [Required]
         [Display(Name = "Name")]
         public string Name { get; set; }

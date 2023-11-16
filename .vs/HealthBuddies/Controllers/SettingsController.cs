@@ -40,20 +40,26 @@ namespace HealthBuddies.Controllers
 
         // POST: Settings/Create
         [HttpPost]
-        public ActionResult Create(UserProfileModel user, HttpPostedFileBase file)
+        public ActionResult Create(UserProfileModel user, HttpPostedFileBase file, string uid)
         {
             try
             {
                 var path = "";
-               /* if (file.ContentLength > 0)
-                {
-                    if ((Path.GetExtension(file.FileName).ToLower() == ".jpg") || (Path.GetExtension(file.FileName).ToLower() == ".png"))
-                    {
-                        path = Path.Combine(Server.MapPath("~/Content/img/mobiles/"), file.FileName);
+                /* if (file.ContentLength > 0)
+                 {
+                     if ((Path.GetExtension(file.FileName).ToLower() == ".jpg") || (Path.GetExtension(file.FileName).ToLower() == ".png"))
+                     {
+                         path = Path.Combine(Server.MapPath("~/Content/img/mobiles/"), file.FileName);
 
-                    }
+                     }
 
-                }*/
+                 }*/
+
+                
+                // Set the UID in the user model
+                user.uid = uid;
+
+
                 AddStudentToFirebase(user);
                 ModelState.AddModelError(string.Empty, "Added Successfully");
             }
@@ -68,9 +74,9 @@ namespace HealthBuddies.Controllers
         {
             client = new FireSharp.FirebaseClient(config);
             var data = student;
-            PushResponse response = client.Push("Users/", data);
-            data.Username = response.Result.name;
-            SetResponse setResponse = client.Set("Users/" + data.Username, data);
+            //PushResponse response = client.Push("Users/", data);
+            //data.Username = response.Result.name;
+            SetResponse setResponse = client.Set("Users/" + data.uid, data);
         }
 
         // GET: Settings/Edit/5
