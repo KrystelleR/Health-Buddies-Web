@@ -9,53 +9,37 @@ using static Org.BouncyCastle.Math.EC.ECCurve;
 using FireSharp.Config;
 using FireSharp.Interfaces;
 using FireSharp.Response;
+using Firebase.Auth;
+using Microsoft.AspNet.Identity;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace HealthBuddies.Controllers
 {
-    public class SettingsController : Controller
+    public class AccountController : Controller
     {
-        IFirebaseConfig config = new FirebaseConfig
-        {
-            AuthSecret = "AIzaSyCXThnYaueG5XhSGIUNzF7iHQFXb8iHjgA",
-            BasePath = "https://healthbuddies-48435-default-rtdb.firebaseio.com"
-        };
-        IFirebaseClient client;
-        // GET: Settings
-        public ActionResult Index()
+        // GET: Account
+        private static string ApiKey = "AIzaSyCXThnYaueG5XhSGIUNzF7iHQFXb8iHjgA";
+        private static string Bucket = "healthbuddies-48435.appspot.com";
+        // GET: Account
+        public ActionResult SignUp()
         {
             return View();
         }
 
-        // GET: Settings/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: Settings/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Settings/Create
         [HttpPost]
-        public ActionResult Create(UserProfileModel user, HttpPostedFileBase file)
+        [AllowAnonymous]
+        public async Task<ActionResult> SignUp(SignUpModel model)
         {
             try
             {
-                var path = "";
-               /* if (file.ContentLength > 0)
-                {
-                    if ((Path.GetExtension(file.FileName).ToLower() == ".jpg") || (Path.GetExtension(file.FileName).ToLower() == ".png"))
-                    {
-                        path = Path.Combine(Server.MapPath("~/Content/img/mobiles/"), file.FileName);
-
-                    }
-
-                }*/
-                AddStudentToFirebase(user);
-                ModelState.AddModelError(string.Empty, "Added Successfully");
+                var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                var a = await auth.CreateUserWithEmailAndPasswordAsync(model.Email, model.Password, model.Name, true);
+                string uid = a.User.LocalId;
+                //ModelState.AddModelError(string.Empty, "Please Verify your email then login please.");
+                UserProfileModel user = new UserProfileModel();
+                user.setDetails = false;
+                return RedirectToAction("Login", "Account", new { uid = uid });
             }
             catch (Exception ex)
             {
@@ -64,22 +48,159 @@ namespace HealthBuddies.Controllers
 
             return View();
         }
-        private void AddStudentToFirebase(UserProfileModel student)
+
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult Login(string returnUrl)
         {
-            client = new FireSharp.FirebaseClient(config);
-            var data = student;
-            PushResponse response = client.Push("Users/", data);
-            data.Username = response.Result.name;
-            SetResponse setResponse = client.Set("Users/" + data.Username, data);
+            try
+            {
+                // Verification.
+                if (this.Request.IsAuthenticated)
+                {
+                    //  return this.RedirectToLocal(returnUrl);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Info
+                Console.Write(ex);
+            }
+
+            // Info.
+            return this.View();
         }
 
-        // GET: Settings/Edit/5
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        {
+            try
+            {
+                // Verification.
+                if (ModelState.IsValid)
+                {
+                    var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                    var ab = await auth.SignInWithEmailAndPasswordAsync(model.Email, model.Password);
+                    string token = ab.FirebaseToken;
+                    var user = ab.User;
+                    if (token != "")
+                    {
+
+                        this.SignInUser(user.Email, token, false);
+                        string uid = ab.User.LocalId;
+                        UserProfileModel upf = new UserProfileModel();
+                        Session["UserProfile"] = upf;
+                        upf.uid = uid;
+                        if (upf.setDetails)
+                        {
+                            return RedirectToAction("Home", "Index", new { uid = uid });
+                        }
+                        else
+                        {
+                            return RedirectToAction("Create", "Settings", new { uid = uid });
+                        }
+                    }
+                    else
+                    {
+                        // Setting.
+                        ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Info
+                Console.Write(ex);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return this.View(model);
+        }
+
+        private void SignInUser(string email, string token, bool isPersistent)
+        {
+            // Initialization.
+            var claims = new List<Claim>();
+            try
+            {
+                // Setting
+                claims.Add(new Claim(ClaimTypes.Email, email));
+                claims.Add(new Claim(ClaimTypes.Authentication, token));
+                var claimIdenties = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+                var ctx = Request.GetOwinContext();
+                var authenticationManager = ctx.Authentication;
+                // Sign In.
+                authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, claimIdenties);
+            }
+            catch (Exception ex)
+            {
+                // Info
+                throw ex;
+            }
+        }
+
+        private void ClaimIdentities(string username, bool isPersistent)
+        {
+            // Initialization.
+            var claims = new List<Claim>();
+            try
+            {
+                // Setting
+                claims.Add(new Claim(ClaimTypes.Name, username));
+                var claimIdenties = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+
+            }
+            catch (Exception ex)
+            {
+                // Info
+                throw ex;
+            }
+        }
+        private ActionResult RedirectToLocal(string returnUrl)
+        {
+            try
+            {
+                // Verification.
+                if (Url.IsLocalUrl(returnUrl))
+                {
+                    // Info.
+                    return this.Redirect(returnUrl);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Info
+                throw ex;
+            }
+
+            // Info.
+            return this.RedirectToAction("LogOff", "Account");
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult LogOff()
+        {
+            var ctx = Request.GetOwinContext();
+            var authenticationManager = ctx.Authentication;
+            authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            return RedirectToAction("Login", "Account");
+        }
+        // GET: Account/Details/5
+        public ActionResult Details(int id)
+        {
+            return View();
+        }
+
+        // GET: Account/Create
+        // GET: Account/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: Settings/Edit/5
+        // POST: Account/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -95,13 +216,13 @@ namespace HealthBuddies.Controllers
             }
         }
 
-        // GET: Settings/Delete/5
+        // GET: Account/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: Settings/Delete/5
+        // POST: Account/Delete/5
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
