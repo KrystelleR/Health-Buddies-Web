@@ -458,6 +458,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FitnessController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LeaderboardController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -489,6 +490,11 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\bear1.png" />
+    <Content Include="Images\bear2.png" />
+    <Content Include="Images\bear3.png" />
+    <Content Include="Images\koala.png" />
+    <Content Include="Images\shoes.png" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -523,8 +529,11 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\SignUp.cshtml" />
-    <Content Include="Views\Settings\Create.cshtml" />
     <Content Include="Views\Fitness\Details.cshtml" />
+    <Content Include="Views\Leaderboard\Index.cshtml" />
+    <Content Include="Views\Fitness\Graphs.cshtml" />
+    <Content Include="Views\Fitness\Graph.cshtml" />
+    <Content Include="Views\Settings\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
