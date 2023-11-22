@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@model HealthBuddies.Models.UserProfileModel
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -20,6 +21,9 @@
                     <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Setting", "Create", "Settings", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Fitness", "Details", "Fitness", new { area = "", id = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Leaderboard", "Index", "Leaderboard", new { area = ""}, new { @class = "nav-link" })</li>
                 </ul>
             </div>
         </div>

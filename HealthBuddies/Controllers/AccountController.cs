@@ -11,10 +11,12 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
+
 namespace HealthBuddies.Controllers
 {
     public class AccountController : Controller
     {
+        
         // GET: Account
         private static string ApiKey = "AIzaSyCXThnYaueG5XhSGIUNzF7iHQFXb8iHjgA";
         private static string Bucket = "healthbuddies-48435.appspot.com";
@@ -32,7 +34,11 @@ namespace HealthBuddies.Controllers
             {
                 var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
                 var a = await auth.CreateUserWithEmailAndPasswordAsync(model.Email, model.Password, model.Name, true);
-                ModelState.AddModelError(string.Empty, "Please Verify your email then login Plz.");
+                string uid = a.User.LocalId;
+                //ModelState.AddModelError(string.Empty, "Please Verify your email then login please.");
+                UserProfileModel user = new UserProfileModel();
+                user.setDetails = false;
+                return RedirectToAction("Login", "Account", new { uid = uid });
             }
             catch (Exception ex)
             {
@@ -79,8 +85,20 @@ namespace HealthBuddies.Controllers
                     var user = ab.User;
                     if (token != "")
                     {
+
                         this.SignInUser(user.Email, token, false);
-                        return this.RedirectToLocal(returnUrl);
+                        string uid = ab.User.LocalId;
+                        UserProfileModel upf = new UserProfileModel();
+                        Session["UserProfile"] = upf;
+                        upf.uid = uid;
+                        if (upf.setDetails)
+                        {
+                            return RedirectToAction("Home", "Index", new { uid = uid });
+                        }
+                        else
+                        {
+                            return RedirectToAction("Create", "Settings", new {uid = uid});
+                        }
                     }
                     else
                     {

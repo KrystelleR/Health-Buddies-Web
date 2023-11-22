@@ -10,7 +10,7 @@ namespace HealthBuddies.Models
     public class LoginViewModel
     {
         [Key]
-        public int id { get; set; }
+        public string id { get; set; }
         [Required]
         [DataType(DataType.EmailAddress)]
         [Display(Name = "Email")]
