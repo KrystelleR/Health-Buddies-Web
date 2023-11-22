@@ -248,6 +248,11 @@ else
                                 <p class="text-gray-800 text-lg">Full Body Stretch Routine for Flexibility</p>
                             </div>
                         </div>
+                        <div class="flex items-center mb-4">
+                            <label class="text-lg mr-2">Enter Move Minutes:</label>
+                            <input type="text" id="dataInput" class="p-2 border rounded" placeholder="Enter minutes...">
+                            <button onclick="saveData()" class="bg-green-500 text-white rounded px-4 py-2 mr-2">Save</button>
+                        </div>
 
                         <!-- Repeat the structure for additional sub cards as needed -->
 
@@ -312,6 +317,11 @@ else
                             <div class="p-4">
                                 <p class="text-gray-800 text-lg">Full Body Stretch Routine for Flexibility</p>
                             </div>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <label class="text-lg mr-2">Enter Move Minutes:</label>
+                            <input type="text" id="dataInput" class="p-2 border rounded" placeholder="Enter minutes...">
+                            <button onclick="saveData()" class="bg-green-500 text-white rounded px-4 py-2 mr-2">Save</button>
                         </div>
 
                         <!-- Repeat the structure for additional sub cards as needed -->
@@ -450,28 +460,27 @@ else
     </script>
     <script>
         function saveData() {
-            var dataInput = document.getElementById('dataInput').value;
+                var dataInput = document.getElementById('dataInput').value;
 
-            // Perform any necessary validation on dataInput
+                // Perform any necessary validation on dataInput
 
-            // Send data to the server using AJAX
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', '/Fitness/SaveData'); // Adjust the URL to match your controller action
-            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+                // Send data to the server using AJAX
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/Fitness/SaveData'); // Adjust the URL to match your controller action
+                xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    // Handle success, if needed
-                    console.log('Data saved successfully!');
-                } else {
-                    // Handle errors, if needed
-                    console.error('Failed to save data:', xhr.statusText);
-                }
-                console.log('Save button clicked!');
-            };
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        // Handle success, if needed
+                        console.log('Data saved successfully!');
+                    } else {
+                        // Handle errors, if needed
+                        console.error('Failed to save data:', xhr.statusText);
+                    }
+                };
 
-            xhr.send(JSON.stringify({ dataInput: dataInput }));
-        }
+                xhr.send(JSON.stringify({dataInput: dataInput }));
+            }
         document.addEventListener("DOMContentLoaded", function () {
 
             // Modify the saveData function to send data to the server

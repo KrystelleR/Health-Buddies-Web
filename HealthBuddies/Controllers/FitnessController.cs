@@ -218,7 +218,7 @@ namespace HealthBuddies.Controllers
 
         // POST: Fitness/SaveData
         [HttpPost]
-        public async Task<ActionResult> SaveData(int additionalMinutes)
+        public async Task<ActionResult> SaveData(int dataInput)
         {
             try
             {
@@ -230,25 +230,51 @@ namespace HealthBuddies.Controllers
                     client = new FireSharp.FirebaseClient(config);
                 }
 
-                var responseCurrentMinutes = await Task.Run(() => client.Get($"UserMoveMinutes/{uid}/DataInput"));
-                int currentMinutes = responseCurrentMinutes.ResultAs<int>();
+                // Check if the user entry exists
+                var responseUser = await Task.Run(() => client.Get($"UserMinutes/{uid}"));
 
-                // Add the additional minutes
-                int updatedMinutes = currentMinutes + additionalMinutes;
-
-                // Update the database with the new value
-                var exerciseData = new { minutes = updatedMinutes };
-                var response = await Task.Run(() => client.Set($"UserMoveMinutes/{uid}/DataInput", exerciseData));
-
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                if (responseUser.Body == "null")
                 {
-                    // Data saved successfully
-                    return Json(new { success = true, message = "Data saved successfully" });
+                    // If the user entry doesn't exist, create it with the initial dataInput value
+                    var newExerciseData = new { minutes = dataInput };
+                    var newResponse = await Task.Run(() => client.Set($"UserMinutes/{uid}", newExerciseData));
+
+                    if (newResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        // Data saved successfully
+                        return Json(new { success = true, message = "Data saved successfully" });
+                    }
+                    else
+                    {
+                        // Handle error
+                        return Json(new { success = false, message = "Failed to save data to Firebase" });
+                    }
                 }
                 else
                 {
-                    // Handle error
-                    return Json(new { success = false, message = "Failed to save data to Firebase" });
+                    // Get the current minutes
+                    var responseCurrentMinutes = await Task.Run(() => client.Get($"UserMinutes/{uid}/minutes"));
+                    int currentMinutes = responseCurrentMinutes.ResultAs<int>();
+
+                    // Add the additional minutes to the existing data
+                    int updatedMinutes = currentMinutes + dataInput;
+
+                    // Your exercise data
+                    var exerciseData = new { minutes = updatedMinutes };
+
+                    // Save data to Firebase
+                    var response = await Task.Run(() => client.Set($"UserMinutes/{uid}", exerciseData));
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        // Data saved successfully
+                        return Json(new { success = true, message = "Data saved successfully" });
+                    }
+                    else
+                    {
+                        // Handle error
+                        return Json(new { success = false, message = "Failed to save data to Firebase" });
+                    }
                 }
             }
             catch (Exception ex)
@@ -256,8 +282,9 @@ namespace HealthBuddies.Controllers
                 return Json(new { success = false, message = $"Error: {ex.Message}" });
             }
         }
-            // GET: Fitness/Create
-            public ActionResult Create()
+
+        // GET: Fitness/Create
+        public ActionResult Create()
         {
             return View();
         }
