@@ -77,96 +77,18 @@ namespace HealthBuddies.Controllers
         {
             try
             {
-                // Verification.
-                if (ModelState.IsValid)
+                var path = "";
+               /* if (file.ContentLength > 0)
                 {
-                    var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
-                    var ab = await auth.SignInWithEmailAndPasswordAsync(model.Email, model.Password);
-                    string token = ab.FirebaseToken;
-                    var user = ab.User;
-                    if (token != "")
+                    if ((Path.GetExtension(file.FileName).ToLower() == ".jpg") || (Path.GetExtension(file.FileName).ToLower() == ".png"))
                     {
+                        path = Path.Combine(Server.MapPath("~/Content/img/mobiles/"), file.FileName);
 
-                        this.SignInUser(user.Email, token, false);
-                        string uid = ab.User.LocalId;
-                        UserProfileModel upf = new UserProfileModel();
-                        Session["UserProfile"] = upf;
-                        upf.uid = uid;
-                        if (upf.setDetails)
-                        {
-                            return RedirectToAction("Home", "Index", new { uid = uid });
-                        }
-                        else
-                        {
-                            return RedirectToAction("Create", "Settings", new { uid = uid });
-                        }
                     }
-                    else
-                    {
-                        // Setting.
-                        ModelState.AddModelError(string.Empty, "Invalid username or password.");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Info
-                Console.Write(ex);
-            }
 
-            // If we got this far, something failed, redisplay form
-            return this.View(model);
-        }
-
-        private void SignInUser(string email, string token, bool isPersistent)
-        {
-            // Initialization.
-            var claims = new List<Claim>();
-            try
-            {
-                // Setting
-                claims.Add(new Claim(ClaimTypes.Email, email));
-                claims.Add(new Claim(ClaimTypes.Authentication, token));
-                var claimIdenties = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
-                var ctx = Request.GetOwinContext();
-                var authenticationManager = ctx.Authentication;
-                // Sign In.
-                authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, claimIdenties);
-            }
-            catch (Exception ex)
-            {
-                // Info
-                throw ex;
-            }
-        }
-
-        private void ClaimIdentities(string username, bool isPersistent)
-        {
-            // Initialization.
-            var claims = new List<Claim>();
-            try
-            {
-                // Setting
-                claims.Add(new Claim(ClaimTypes.Name, username));
-                var claimIdenties = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
-
-            }
-            catch (Exception ex)
-            {
-                // Info
-                throw ex;
-            }
-        }
-        private ActionResult RedirectToLocal(string returnUrl)
-        {
-            try
-            {
-                // Verification.
-                if (Url.IsLocalUrl(returnUrl))
-                {
-                    // Info.
-                    return this.Redirect(returnUrl);
-                }
+                }*/
+                AddStudentToFirebase(user);
+                ModelState.AddModelError(string.Empty, "Added Successfully");
             }
             catch (Exception ex)
             {
@@ -190,7 +112,11 @@ namespace HealthBuddies.Controllers
         // GET: Account/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            client = new FireSharp.FirebaseClient(config);
+            var data = student;
+            PushResponse response = client.Push("Users/", data);
+            data.Username = response.Result.name;
+            SetResponse setResponse = client.Set("Users/" + data.Username, data);
         }
 
         // GET: Account/Create

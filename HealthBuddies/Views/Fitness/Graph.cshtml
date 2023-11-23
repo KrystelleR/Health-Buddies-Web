@@ -1,0 +1,99 @@
+﻿@{
+    ViewBag.Title = "Graph";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Itim" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Itim', cursive;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+    <div class="bg-gradient-to-b from-blue-400 to-blue-600 p-8 rounded-xl shadow-lg w-3/4 mx-auto">
+        <div class="rounded-lg p-6">
+
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="font-bold text-5xl text-white">My Fitness Progress</h1>
+            </div>
+
+            <p class="text-center text-white mb-4">View your move minutes progress</p>
+
+            <div class="flex justify-between mb-6">
+                <div class="flex items-center space-x-2">
+                    <div class="w-4 h-4 bg-green-500 rounded-full"></div>
+                    <p class="text-white">Move Minutes Today</p>
+                    <span class="bg-green-500 text-white px-2 py-1 rounded">@ViewBag.MinutesMoved Minutes</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-4 h-4 bg-red-500 rounded-full"></div>
+                    <p class="text-white">Move Minutes Goal</p>
+                    <span class="bg-red-500 text-white px-2 py-1 rounded">@ViewBag.Goal Minutes</span>
+                </div>
+            </div>
+
+            <div class="bg-blue-100 border border-blue-300 p-6 rounded mb-4">
+                <canvas id="barChart" style="max-width: 600px; margin-top: 20px;"></canvas>
+                <p class="text-center text-gray-500"></p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const minutesMoved = @Html.Raw(ViewBag.MinutesMoved);
+        const goal = @Html.Raw(ViewBag.Goal);
+
+        const barChartCanvas = document.getElementById('barChart');
+
+        const chartDataConfig = {
+            labels: ['Today'], // You can customize the label based on your needs
+            datasets: [{
+                label: 'Move Minutes Data',
+                data: [minutesMoved],
+                backgroundColor: 'rgba(54, 162, 235, 1)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Move Minutes Goal',
+                data: [goal],
+                backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                borderColor: 'rgba(255, 0, 0, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const chartOptions = {
+            scales: {
+                x: {
+                    type: 'category',
+                    position: 'bottom'
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        };
+
+        const barChart = new Chart(barChartCanvas, {
+            type: 'bar',
+            data: chartDataConfig,
+            options: chartOptions
+        });
+    });
+    </script>
+
+</body>
+
+</html>
