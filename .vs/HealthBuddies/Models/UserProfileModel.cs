@@ -8,7 +8,7 @@ namespace HealthBuddies.Models
     public class UserProfileModel
     {
         // User information
-        public string id { get; set; }
+        public string uid { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         public int Age { get; set; }

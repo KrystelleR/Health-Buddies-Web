@@ -28,16 +28,21 @@ namespace HealthBuddies.Controllers
         }
 
         // GET: Fitness/Details/5
-        public async Task<ActionResult> Details(string id)
+        public async Task<ActionResult> Details()
         {
             try
             {
+                UserProfileModel upf = (UserProfileModel)Session["UserProfile"];
+                string id = upf.uid;
                 var user = await GetUserFromFirebase(id);
 
                 if (user != null)
                 {
+                    ViewBag.DailySteps = user.DailySteps;
+                    //ViewBag.LeftToDo = (user.DailySteps - user.Steps);
                     ViewBag.UserEmail = user.Email;
                     ViewBag.UserHeight = user.Height;
+                    ViewBag.UID = id;
                 }
                 else
                 {
@@ -52,18 +57,16 @@ namespace HealthBuddies.Controllers
             return View();
         }
 
-        private async Task<UserProfileModel> GetUserFromFirebase(string username)
+        private async Task<UserProfileModel> GetUserFromFirebase(string uid)
         {
             client = new FireSharp.FirebaseClient(config);
 
             // Use Task.Run to wrap the synchronous method in a Task
-            var response = await Task.Run(() => client.Get("Users/" + username));
+            var response = await Task.Run(() => client.Get("Users/" + uid));
             var user = response.ResultAs<UserProfileModel>();
 
             return user;
         }
-
-
 
         // GET: Fitness/Create
         public ActionResult Create()
